@@ -95,7 +95,7 @@ namespace BlazorCrud.Server.Controllers
         [Route("Guardar")]
         public async Task<IActionResult> Guardar(EmpleadoDTO empleado)
         {
-            var responseApi = new ResponseAPI<EmpleadoDTO>();
+            var responseApi = new ResponseAPI<int>();
 
 
             try
@@ -117,12 +117,79 @@ namespace BlazorCrud.Server.Controllers
                     responseApi.Valor = dbEmpleado.IdEmpleado;
                 }else
                 {
-
+                    responseApi.EsCorrecto = false;
+                    responseApi.Mensaje = "No guardado";
                 }
 
-                responseApi.EsCorrecto = true;
-                responseApi.Valor = EmpleadoDTO;
+            }
+            catch (Exception ex)
+            {
+                responseApi.EsCorrecto = false;
+                responseApi.Mensaje = ex.Message;
+            }
+            return Ok(responseApi);
+        }
 
+        [HttpPut]
+        [Route("Editar/{id}")]
+        public async Task<IActionResult> Editar(EmpleadoDTO empleado, int id)
+        {
+            var responseApi = new ResponseAPI<int>();
+
+            try
+            {
+                var dbEmpleado = await _dbContext.Empleados.FirstOrDefaultAsync(e => e.IdEmpleado == id);
+                if (dbEmpleado.IdEmpleado != null)
+                {
+                    dbEmpleado.NombreCompleto = empleado.NombreCompleto;
+                    dbEmpleado.IdEmpleado = empleado.IdDepartamento;
+                    dbEmpleado.Sueldo = empleado.Sueldo;
+                    dbEmpleado.FechaContrato = empleado.FechaContrato;
+
+
+                    _dbContext.Empleados.Update(dbEmpleado);
+                    await _dbContext.SaveChangesAsync();
+                    responseApi.EsCorrecto = true;
+                    responseApi.Valor = dbEmpleado.IdEmpleado;
+                }
+                else
+                {
+                    responseApi.EsCorrecto = false;
+                    responseApi.Mensaje = "Empleado no encontrado";
+                }
+            }
+            catch (Exception ex)
+            {
+                responseApi.EsCorrecto = false;
+                responseApi.Mensaje = ex.Message;
+            }
+            return Ok(responseApi);
+        }
+
+        [HttpDelete]
+        [Route("Eliminar/{id}")]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            var responseApi = new ResponseAPI<int>();
+
+            try
+            {
+                var dbEmpleado = await _dbContext.Empleados.FirstOrDefaultAsync(e => e.IdEmpleado == id);
+
+
+                if (dbEmpleado != null)
+                {
+
+                    _dbContext.Empleados.Remove(dbEmpleado);
+                    await _dbContext.SaveChangesAsync();
+
+                    responseApi.EsCorrecto = true;
+                }
+                else
+                {
+                    responseApi.EsCorrecto = false;
+                    responseApi.Mensaje = "Empleado no encontrado";
+                }
             }
             catch (Exception ex)
             {
