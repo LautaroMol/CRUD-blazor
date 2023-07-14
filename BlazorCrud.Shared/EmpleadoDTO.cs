@@ -10,19 +10,21 @@ namespace BlazorCrud.Shared
 {
     public class EmpleadoDTO
     {
-        [Required(ErrorMessage ="El Campo {0} es requerido")]
+        
         public int IdEmpleado { get; set; }
+		[Required(ErrorMessage = "El Campo {0} es requerido")]
+		public string NombreCompleto { get; set; } = null!;
 
-        public string NombreCompleto { get; set; } = null!;
-        [Required(ErrorMessage = "El Campo {0} es requerido")]
+        [Required]
         [Range(1,int.MaxValue, ErrorMessage ="El campo {0} es requerido")]
+
         public int IdDepartamento { get; set; }
-        [Required(ErrorMessage = "El Campo {0} es requerido")]
+        [Required]
         [Range(1, int.MaxValue, ErrorMessage = "El campo {0} es requerido")]
         public int Sueldo { get; set; }
 
         public DateTime FechaContrato { get; set; }
 
-        public DepartamentoDTO Departamento { get; set; }
+        public DepartamentoDTO? Departamento { get; set; }
     }
 }
